@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teste de Rádio R14 — Linha de Fazenda</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f3;color:#1a1a18;min-height:100vh}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f3;--bg3:#ebebea;
+  --text:#1a1a18;--text2:#5f5e5a;--text3:#888780;
+  --border:#e0dfd8;--border2:#c8c7c0;
+  --teal:#1D9E75;--teal-light:#E1F5EE;--teal-dark:#0F6E56;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --red:#E24B4A;--red-light:#FCEBEB;
+  --green:#639922;--green-light:#EAF3DE;--green-dark:#3B6D11;
+  --radius:8px;--radius-lg:12px
+}
+.wrap{max-width:640px;margin:0 auto;padding:2rem 1rem 4rem}
+.header{margin-bottom:1.5rem}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.brand-icon{width:44px;height:44px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:22px}
+.brand-text h1{font-size:18px;font-weight:600;color:var(--text)}
+.brand-text p{font-size:12px;color:var(--text3);margin-top:2px}
+.flow-bar{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;width:fit-content}
+.flow-arrow{color:var(--border2)}
+.steps{display:flex;align-items:center;margin:1.25rem 0}
+.step-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);flex:1}
+.step-item.active{color:var(--text);font-weight:500}
+.step-item.done{color:var(--teal)}
+.step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.step-item.done .step-num{background:var(--teal);border-color:var(--teal);color:#fff}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 4px}
+.step-line.done{background:var(--teal)}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1rem}
+.section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:1rem}
+.field{margin-bottom:1.1rem}
+.field:last-child{margin-bottom:0}
+.field>label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px}
+.req{color:var(--red)}
+.field input,.field select{width:100%;font-size:14px;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888780' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.field input:focus,.field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.row2{grid-template-columns:1fr}}
+.regional-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+@media(max-width:400px){.regional-grid{grid-template-columns:repeat(2,1fr)}}
+.reg-btn{border:1px solid var(--border);border-radius:var(--radius);padding:14px 8px;cursor:pointer;background:var(--bg);display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s;width:100%}
+.reg-btn:hover{border-color:var(--border2);background:var(--bg2)}
+.reg-btn.selected{border-color:var(--teal);background:var(--teal-light)}
+.reg-flag{font-size:26px;line-height:1}
+.reg-label{font-size:13px;font-weight:600;color:var(--text2)}
+.reg-btn.selected .reg-label{color:var(--teal-dark)}
+.reg-count{font-size:10px;color:var(--text3)}
+.reg-btn.selected .reg-count{color:var(--teal)}
+.qual-group{display:flex;gap:8px;margin-top:4px}
+.qual-opt input{position:absolute;opacity:0;width:0;height:0}
+.qual-opt{position:relative;flex:1}
+.qual-opt label{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s}
+.qual-opt.bom input:checked+label{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+.qual-opt.medio input:checked+label{border-color:var(--amber);background:var(--amber-light);color:var(--amber)}
+.qual-opt.ruim input:checked+label{border-color:var(--red);background:var(--red-light);color:var(--red)}
+.resp-group{display:flex;gap:8px;margin-top:4px}
+.resp-opt input{position:absolute;opacity:0;width:0;height:0}
+.resp-opt{position:relative;flex:1}
+.resp-opt label{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s}
+.resp-opt.sim input:checked+label{border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark)}
+.resp-opt.nao input:checked+label{border-color:var(--red);background:var(--red-light);color:var(--red)}
+.teste-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem}
+.teste-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.teste-num{width:26px;height:26px;border-radius:50%;background:var(--text);color:var(--bg);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.teste-title{font-size:14px;font-weight:600;color:var(--text)}
+.resumo-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:.75rem;font-size:13px;color:var(--text2)}
+.resumo-box strong{color:var(--text)}
+.btn-row{display:flex;gap:10px;margin-top:1rem}
+.btn-back{flex:1;padding:11px;background:transparent;border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
+.btn-back:hover{background:var(--bg3)}
+.btn-next{flex:2;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-next:hover{opacity:.82}
+.btn-next:active{opacity:.65}
+.success{text-align:center;padding:3rem 2rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.success-icon{font-size:52px;margin-bottom:1rem}
+.success h2{font-size:22px;font-weight:600;margin-bottom:8px}
+.success p{font-size:14px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
+.btn-novo{padding:11px 28px;background:transparent;border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;cursor:pointer;color:var(--text);transition:background .15s}
+.btn-novo:hover{background:var(--bg3)}
+.offline-badge{background:#FAEEDA;border:1px solid #BA7517;color:#854F0B;border-radius:8px;padding:8px 14px;font-size:12px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.hidden{display:none!important}
+.btn-gps{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;width:100%;margin-top:6px}
+.btn-gps:hover{border-color:var(--teal);color:var(--teal)}
+.btn-gps.loading{opacity:.6;pointer-events:none}
+.gps-result{display:flex;align-items:center;gap:6px;margin-top:6px;padding:7px 10px;background:var(--teal-light);border:1px solid rgba(29,158,117,.3);border-radius:var(--radius);font-size:11px;color:var(--teal-dark)}
+.gps-error{display:flex;align-items:center;gap:6px;margin-top:6px;padding:7px 10px;background:var(--red-light);border:1px solid rgba(226,75,74,.3);border-radius:var(--radius);font-size:11px;color:var(--red)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">📻</div>
+      <div class="brand-text">
+        <h1>Teste de Rádio R14</h1>
+        <p>Linha de Fazenda · Monitoramento de cobertura</p>
+      </div>
+    </div>
+    <div class="flow-bar">
+      <span>Líderes e monitores (Patrimonial)</span>
+      <span class="flow-arrow">──▶</span>
+      <span><strong>R14</strong></span>
+      <span class="flow-arrow">──▶</span>
+      <span>IRIS</span>
+    </div>
+  </div>
+
+  <div class="steps" id="steps-bar">
+    <div class="step-item active" id="st1"><div class="step-num">1</div><span>Identificação</span></div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step-item" id="st2"><div class="step-num">2</div><span>Fazenda</span></div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step-item" id="st3"><div class="step-num">3</div><span>Testes</span></div>
+  </div>
+
+  <div id="offline-badge" class="offline-badge hidden">📵 <span id="offline-txt"></span></div>
+
+  <!-- Step 1 -->
+  <div id="step1">
+    <div class="card">
+      <div class="section-label">Colaborador</div>
+      <div class="field">
+        <label>Nome do colaborador <span class="req">*</span></label>
+        <input type="text" id="nome" placeholder="Seu nome completo">
+      </div>
+      <div class="field">
+        <label>Data do teste <span class="req">*</span></label>
+        <input type="date" id="data">
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">Regional</div>
+      <div class="regional-grid">
+        <button class="reg-btn" id="reg-UGO01" onclick="selectReg('UGO 01','reg-UGO01')">
+          <span class="reg-flag">🟦</span>
+          <span class="reg-label">UGO 01</span>
+          <span class="reg-count">110 fazendas</span>
+        </button>
+        <button class="reg-btn" id="reg-UGO02" onclick="selectReg('UGO 02','reg-UGO02')">
+          <span class="reg-flag">🟩</span>
+          <span class="reg-label">UGO 02</span>
+          <span class="reg-count">164 fazendas</span>
+        </button>
+        <button class="reg-btn" id="reg-UGO03" onclick="selectReg('UGO 03','reg-UGO03')">
+          <span class="reg-flag">🟨</span>
+          <span class="reg-label">UGO 03</span>
+          <span class="reg-count">25 fazendas</span>
+        </button>
+        <button class="reg-btn" id="reg-UGO04" onclick="selectReg('UGO 04','reg-UGO04')">
+          <span class="reg-flag">🟧</span>
+          <span class="reg-label">UGO 04</span>
+          <span class="reg-count">147 fazendas</span>
+        </button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goStep(2)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step2" class="hidden">
+    <div class="card">
+      <div class="section-label">Fazenda</div>
+      <div class="field">
+        <label>Fazenda <span class="req">*</span></label>
+        <select id="fazenda">
+          <option value="">Selecione a fazenda...</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Voltar</button>
+      <button class="btn-next" onclick="goStep(3)">Iniciar testes →</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="step3" class="hidden">
+    <div id="testes-container"></div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Voltar</button>
+      <button class="btn-next" onclick="enviar()">📤 Enviar resultado</button>
+    </div>
+  </div>
+
+  <!-- Enviando -->
+  <div id="sending" class="hidden">
+    <div class="success">
+      <div class="success-icon">⏳</div>
+      <h2>Enviando...</h2>
+      <p>Aguarde, registrando os dados na planilha.</p>
+    </div>
+  </div>
+
+  <!-- Sucesso -->
+  <div id="success" class="hidden">
+    <div class="success">
+      <div class="success-icon">✅</div>
+      <h2>Testes registrados!</h2>
+      <p id="success-desc"></p>
+      <button class="btn-novo" onclick="resetForm()">+ Novo registro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxK-15mTfbOeRdvGXJMe9iSBywWYrr_5asyXSHMPEQiqM5O9K2b5XTtzOYIruHOc5Q4-g/exec';
+const FILA_KEY = 'radio_r14_fila';
+const NUM_TESTES = 1; // 1 teste por envio
+
+const FAZENDAS = {
+  "UGO 01": ["AFM","Água Boa-Gabriel Garcia","Alvorada I-Francisco Prado","Alvorada II-Francisco Prado","Alvorada-Koga","Alvorada-Prado","Amélia do Brioso-Francisco Prado","Ariranha III","Ariranha I-Luna","Aruanã-Kozo","Barra Mansa","Barranco Vermelho","Barrinha","Boa Aguada-Mutum","Boi Branco","Bom Jardim","Bom Retiro- Glebas A1B1","Bom Retiro-Glebas A2B2","Brasília I","Brilhante-Sidemar","Brioso","Buriti-Gottardi","Cabeceira Bonita","Canivete-Ribas","Celina","Cinco Estrelas","Colorado-Sidemar","Creolinho","Dona Branca-Gleba C","Duas Represas","Eldorado II","Eldorado-Cascini","Embauva-São José","Esse","Estância Magaly","Estância Manoel Belchior","FJE","Flor de Liz II","Goiaba","Guri","Guri II","Guri III","Helaine do Bom Jesus","Imbauva","Índia","Indiana II","Indiana III","Indiana IV","Iracema","Juaman","Kokets","Labor-Alvorada","Lua Cheia","Lyder","Malela","Manaus","Marca Quatro","Mocha","Montana","Mutum","Nevada-Geórgia","Nevada-Soares","Nossa Senhora Aparecida-Wilson","Nossa Senhora da Esperança","Nova Monte Alto","NS Aparecida-Jurado","NSrª Aparecida-Bortoletto","NSrª Aparecida-Céu de Estrela","Paprila","Pontal-Dias","Quatro Irmãs","Raízes","Recanto do Lobo","Recanto-Bortoletto","Recreio-Magna","Recreio-Prado","Retiro do Pontal","Ruivinha I","Saldanha I","Saldanha II","Samambaia","Santa Barbara","Santa Eliza","Santa Helena-Benedita","Santa Iracema","Santa Isabel-Parise","Santa Lídia-Senchetti","Santa Lívia","Santa Lucia-Edebrando Herreros","Santa Luzia-Fernando Bomfim","Santa Marina","Santa Matilde","Santa Mercedes","Santa Nena","Santa Rita-Wilson","Santa Terezinha 1-Wilson","Santo André","Santo Antonio-Claúdio Franco","São Bento-Gleba A","São Bento-Gleba B","São João","São Judas Tadeu-Antônio","São Luiz-Ribeiro","São Marcos-Medeiros","São Mateus-Juliete","São Sebastião","São Vicente VII","Serrinha","Sol Amarelo I e II","Sol Amarelo III","Traipu","Três irmãos-Pizzo","Vale Verde","Várzea Verde","Vitória-Tarek","Vô Nhonho"],
+  "UGO 02": ["1º Julho","1º Maio","2 Irmãos","Agropecuária-Commar","Água Boa-Inhã","Água Sumida","Água Vermelha-Stucchi","Alba","Alba-Pátio","Alegrete","Aliança","Alvorada","Alvorada II-Mazza","Araçá","Arizona-São Pedro","Balainho","Barra Dourada","Barraca","Bebedouro","Beija-Flor","Beira Rio","Beira Rio-Jefferson","Beira-Rio-Passo-Pantano","Belezura","Berrante","Boa Esperança-Blaya","Boa Esperança-Terminal","Boa Vista-Aires","Boa Vista-Otoboni","Buriti","Buriti 4-Aleudo","Buriti da Véstia","Cabeceira da Estrada","Cabeceirão","Cachoeirinha","Caçula I e II","Caçula III","Campo Bom-Inhã","Campo Limpo I","Campo Limpo II","Campo Limpo III","Cavalubre II","Cel. Cacildo Arantes","Colorado","Conquista II","Conquista III-Ferreira","Conquista-Coletti","Córrego do Ouro","Cristo Rei-Stamato","Da Mata","Da Mata VIII-Costa","Da Mina","Divisa-Onofre","Dois Amigos","Dois Coqueiros","Dois Irmãos-Trindade","Esperança","Esperança-Ademar Junior","Estância Ana Paula","Estância NSrª Aparecida","Estância São José-Freitas","Estância São Judas Tadeu","Estância São Sebastião","Estância Talismã","Estância Vinicius","Estiva I e II","Estiva I-Heveraldo","Estiva-Paiol","Estiva-Quatro Meninas","Estiva-Três Meninas","Ezutus IX","Fantasia","Farinazzo","Felicidade","Formoso","Idalina","Império-Buticão","Integrada-Commar","Jandaia","Jangada","Jarmo","Jugui","Kalahari","Lageado Novo","Lagoa Amarela","Lagoa Bonita-Ademir Leon","Maravilha","Maricá","Matão","Morro Vermelho","Morro Vermelho-Dalila","Mutuns-Trindade","Nambú","Nossa Senhora Fatima-Alvarez","Nossa Sra. Penha","Nova Aliança-Commar","Nova Era","Nova Olinda","NS Aparecida II-Viana","NS Aparecida I-Viana","NSrª de Fátima-João Batista","Olho D'agua","Ourissanga-Marcos Quito","Padroeira","Palmeiras","Pantano","Papagaio","Paraiso do Queixada","Pontal II","Portal Lageado","Primavera-JA","Primavera-Pereira","Progresso","Progresso-Gentil Zanovello","Queixada-Sandra Rahal","Radar","Raimundo Bezerra","Rancharia","Rancho de Fatima","Rancho Pecora","Recanto","Recanto-Minervino","Recanto-Ulisses","Rio Preto","Rosana I","Rosana II","Santa Adélia do Formoso","Santa Ana-Ademar","Santa Edwirges","Santa Fé-Coqueiros","Santa Fé-Fortaleza","Santa Fé-Sebastião Fogaça","Santa Joana","Santa Lourdes","Santa Lucia II-Jose Vicente","Santa Lúcia-Bassi","Santa Luzia-Coletti","Santa Luzia-Durval","Santa Luzia-Jamil","Santa Luzia-Poletto","Santa Maria","Santa Maria-Ciniro","Santa Mariana","Santa Maria-Wagner","Santa Rita de Cássia-Gleba I","Santa Rita-Mattos","Santa Rosa-Fenelon","Santa Terezinha-Washyngton","Santa Therezinha-Boldrini","Santa Vera-Cecilia Arantes","Santo Antonio-Walnei","Santo Expedito","Santo Ivo","São Benedito II","São Francisco de Assis","São João da Véstia","São João-Eliane","São João-Oliveira","São Joaquim-Antonieta","São José","São José II","São José-Gleba 2","São Luiz-Antenor","São Manoel","São Martinho","São Mateus-Rezek","São Miguel-Ovídio","São Pedro-Queiroz","São Sebastião-Camargo","São Vicente-Franco","Shestese","Signo Sol","Siriema","Site Eldorado","Sítio Favú","Sítio Santa Rita","Sítio Tupi","Sobradinho","Suiça","Talismã","Tambakai","Tanaka","Tarumã","Três Coqueiros","Três Estrelas da Mina","Três Irmãos-Inhã","Três Irmãos-Marques","Três Irmãos-Prado","Três Irmãs-Poletto","Três Meninas","Três Netos","Triunfo","Vale da Pecuária","Vale Formoso","Vanemar","Vista Alegre-Macedônia","Xapuri"],
+  "UGO 03": ["Barra do São Pedro","Cabeceira","Cantinho do Céu","Debrasa-Energética","Debrasa-Jotapar","Debrasa-Paula Meirelles","Douradinha","Indaiá","Irmãos Maeda","Novo Horizonte-Higuchi","Novo Horizonte-Tsuji","Retiro da Ema","Santa Maria-Ferreira","Santa Maria-Roberto Ferrari","Santa Rita de Cássia- Calazans","Santa Terezinha-Cantú","Santo Antonio-Gleba II","Santo Expedito-Bruna Hofig","São Felipe da Matinha","São Francisco-Ferraz","São Judas Tadeu-OS","Savana","Três Barras","Uêre Mirim","Ueti"],
+  "UGO 04": ["08 de Dezembro","2 Marias","2 Rios","3R","4F","Água Azul","Água Cristalina","Água Limpa","Alegria","Alvorada-Villela-Gleba A","Alvorada-Villela-Gleba B","Alvorada-Villela-Gleba C","Araça-Valci","Arizona","Atalho","Bela Vista-Otoboni","Boa Esperança-Assad","Bom Sucesso","Bonfim","Brasília-NSAP-Divino Garcia","Buriti do Cerrado","Caacupe","Cachoeira","Cachoeirão-Anderson Queiroz","Cachoeira-Ungaro","Caiçara I","Caiçara III-Garcia","Califórnia","Camila","Campo Belo","Canoas","Conquista","Conquista 3 Poderes","Conquista-Bottizini","Conquista-Paca","Cristo Rei","Diogo","Dirce Viana","Dois Irmãos-Valque Ribeiro","Dourado","Duas Meninas","Estância Nicolau Abud","Estância Santo Antonio","Farroupilha","Ferrerinha","Figueirão","Floresta","Floresta-Gleba F","Gaivota","Gramadão","Guilhermina Viana","Jacuba","Jamal","Jataí","Jatobá-Meireles","Joamar","Joanin","Joanin III","Laranja do Quinhão 1 e 2","Líbano","Lobo","Madeiropólis","Minas Gerais","Mutum-Otoboni","Mutunzinho-Otoboni","Natal Seresta","Nossa Senhora de Lurdes","Nossa Senhora Fatima-Claudio Franco","Nossa Sra. Aparecida","Nova Aliança","Nova Barreiro","NS Aparecida-Verçoza","NS das Graças-Garcia","NSrª de Fátima-Gleba A","Pântano-Gleba A","Pedacinho do Céu","Perdizes","Piloto","Pontal Santa Rosa","Portinho","Prata","Prata - Imada","Premix","Pricire","Queixada-Otoboni","Querência","Recanto II","Retirinho","Riadri","Santa Adélia","Santa Adélia III","Santa Alice","Santa Ângela-CaiçaraIII","Santa Clara-Antônio Sanvito","Santa Claudia","Santa Fé-Baracat","Santa Fé-Dib","Santa Fé-Gleba 2","Santa Helena","Santa Helena-Juliete","Santa Irene-Alvarez","Santa Lúcia do Sucuriú","Santa Luiza-Bifaroni","Santa Maria da Terra Roxa","Santa Maria-Calças","Santa Maria-José Theodoro","Santa Olga II","Santa Rita","Santa Rita-Daré","Santa Rosa","Santa Terezinha-Bottizini","Santa Terezinha-Farias","Santo Agostinho","Santo Antonio-Ney Dias","São Francisco","São Francisco-Francisco Queiroz","São Gabriel-Roberto Barros","São Joaquim","São Jorge-Jorge Elias","São Jorge-Nossa Sra. do Guatá","São José I e II-Serrano","São José-Agnar","São José-Santanna","São Lourenço","São Luiz-Universal","São Mateus","São Pedro-Espólio Nicolau Abud","São Pedro-Gabriel Garcia","São Sebastião-Édio Garcia","São Sebastião-Pires","São Vitor","Sobradinho I","Taboca-Coroado","Tamburi-Gervásio","Tayara","Três Amigos","Três Irmãos","Três Irmãos-Eily","Varjãozinho","Vitória-Veduvoto","Vó Ana","Vó Neuza","Vó Suzana"]
+};
+
+let selectedReg = null;
+
+// ── Funções de navegação ──────────────────────────────────────
+function setStep(n) {
+  ['step1','step2','step3','sending','success'].forEach(function(id) {
+    document.getElementById(id).classList.add('hidden');
+  });
+  var target = (n === 4) ? 'success' : 'step' + n;
+  document.getElementById(target).classList.remove('hidden');
+  ['st1','st2','st3'].forEach(function(id, idx) {
+    var el = document.getElementById(id);
+    el.className = 'step-item';
+    if (idx + 1 < n) el.classList.add('done');
+    else if (idx + 1 === n) el.classList.add('active');
+  });
+  ['sl1','sl2'].forEach(function(id, idx) {
+    var el = document.getElementById(id);
+    el.className = 'step-line';
+    if (idx + 1 < n) el.classList.add('done');
+  });
+  window.scrollTo(0, 0);
+}
+
+function selectReg(reg, btnId) {
+  selectedReg = reg;
+  // Remove selection from all
+  document.querySelectorAll('.reg-btn').forEach(function(b) {
+    b.classList.remove('selected');
+    b.style.borderColor = '';
+    b.style.background = '';
+  });
+  // Apply to selected
+  var btn = document.getElementById(btnId);
+  if (btn) {
+    btn.classList.add('selected');
+    btn.style.borderColor = '#1D9E75';
+    btn.style.background = '#E1F5EE';
+  }
+}
+
+function goStep(n) {
+  if (n === 2) {
+    if (!document.getElementById('nome').value.trim()) { alert('Informe o nome do colaborador.'); return; }
+    if (!document.getElementById('data').value) { alert('Informe a data.'); return; }
+    if (!selectedReg) { alert('Selecione a regional.'); return; }
+    // popular fazendas
+    var sel = document.getElementById('fazenda');
+    sel.innerHTML = '<option value="">Selecione a fazenda...</option>';
+    FAZENDAS[selectedReg].forEach(function(f) {
+      var o = document.createElement('option');
+      o.value = f; o.textContent = f;
+      sel.appendChild(o);
+    });
+  }
+  if (n === 3) {
+    if (!document.getElementById('fazenda').value) { alert('Selecione a fazenda.'); return; }
+    buildTestes(1);
+  }
+  setStep(n);
+}
+
+function capturarGPS(i) {
+  var btn = document.getElementById('gps-btn-' + i);
+  var result = document.getElementById('gps-result-' + i);
+  if (!navigator.geolocation) {
+    result.className = 'gps-error';
+    result.innerHTML = '❌ GPS não disponível neste dispositivo';
+    result.style.display = 'flex';
+    return;
+  }
+  btn.classList.add('loading');
+  btn.innerHTML = '⏳ Capturando localização...';
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude.toFixed(6);
+      var lng = pos.coords.longitude.toFixed(6);
+      var acc = Math.round(pos.coords.accuracy);
+      document.getElementById('lat_' + i).value = lat;
+      document.getElementById('lng_' + i).value = lng;
+      btn.classList.remove('loading');
+      btn.innerHTML = '📍 Recapturar localização';
+      result.className = 'gps-result';
+      result.innerHTML = '📍 Lat: ' + lat + ' · Long: ' + lng + ' · Precisão: ~' + acc + 'm';
+      result.style.display = 'flex';
+    },
+    function(err) {
+      btn.classList.remove('loading');
+      btn.innerHTML = '📍 Capturar localização';
+      result.className = 'gps-error';
+      var msg = err.code === 1 ? 'Permissão negada. Habilite o GPS nas configurações.' :
+                err.code === 2 ? 'GPS indisponível. Tente em área aberta.' :
+                'Tempo esgotado. Tente novamente.';
+      result.innerHTML = '❌ ' + msg;
+      result.style.display = 'flex';
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+function buildTestes(n) {
+  var fazenda = document.getElementById('fazenda').value;
+  var html = '<div class="resumo-box"><strong>' + selectedReg + '</strong> · ' + fazenda + ' · <strong>' + n + ' teste</strong></div>';
+  for (var i = 1; i <= n; i++) {
+    html += '<div class="teste-card">'
+      + '<div class="teste-header"><div class="teste-num">' + i + '</div><span class="teste-title">Teste ' + i + '</span></div>'
+      + '<div class="field" style="margin-bottom:.85rem"><label>Talhão / Local <span class="req">*</span></label>'
+      + '<input type="text" id="talhao_' + i + '" placeholder="Ex: Talhão norte, sede, porteira km 12...">'
+      + '<button class="btn-gps" id="gps-btn-' + i + '" type="button" onclick="capturarGPS(' + i + ')">📍 Capturar localização</button>'
+      + '<div id="gps-result-' + i + '" style="display:none"></div>'
+      + '<input type="hidden" id="lat_' + i + '" value="">'
+      + '<input type="hidden" id="lng_' + i + '" value="">'
+      + '</div>'
+      + '<div class="row2">'
+      + '<div class="field" style="margin-bottom:0"><label style="margin-bottom:4px">Qualidade do sinal</label>'
+      + '<div class="qual-group">'
+      + '<div class="qual-opt bom"><input type="radio" name="qual_' + i + '" id="qb' + i + '" value="Bom"><label for="qb' + i + '">📶 Bom</label></div>'
+      + '<div class="qual-opt medio"><input type="radio" name="qual_' + i + '" id="qm' + i + '" value="Médio"><label for="qm' + i + '">📶 Médio</label></div>'
+      + '<div class="qual-opt ruim"><input type="radio" name="qual_' + i + '" id="qr' + i + '" value="Ruim"><label for="qr' + i + '">📵 Ruim</label></div>'
+      + '</div></div>'
+      + '<div class="field" style="margin-bottom:0"><label style="margin-bottom:4px">Central R14 respondeu?</label>'
+      + '<div class="resp-group">'
+      + '<div class="resp-opt sim"><input type="radio" name="resp_' + i + '" id="rs' + i + '" value="Sim"><label for="rs' + i + '">✅ Sim</label></div>'
+      + '<div class="resp-opt nao"><input type="radio" name="resp_' + i + '" id="rn' + i + '" value="Não"><label for="rn' + i + '">❌ Não</label></div>'
+      + '</div></div>'
+      + '</div></div>';
+  }
+  document.getElementById('testes-container').innerHTML = html;
+}
+
+// ── Fila offline ──────────────────────────────────────────────
+function getFilaOffline() {
+  try { return JSON.parse(localStorage.getItem(FILA_KEY) || '[]'); } catch(e) { return []; }
+}
+function addFilaOffline(reg) {
+  var fila = getFilaOffline(); fila.push(reg);
+  localStorage.setItem(FILA_KEY, JSON.stringify(fila));
+}
+function removeFilaOffline(idx) {
+  var fila = getFilaOffline(); fila.splice(idx, 1);
+  localStorage.setItem(FILA_KEY, JSON.stringify(fila));
+}
+function atualizarBadgeOffline() {
+  var n = getFilaOffline().length;
+  var badge = document.getElementById('offline-badge');
+  var txt = document.getElementById('offline-txt');
+  if (n > 0) {
+    txt.textContent = n + ' registro' + (n > 1 ? 's' : '') + ' salvo' + (n > 1 ? 's' : '') + ' aguardando envio (sem rede)';
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+function enviarParaSheets(registro, callback) {
+  fetch(SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(registro)
+  }).then(function() { callback(true); }).catch(function() { callback(false); });
+}
+function despacharFila() {
+  var fila = getFilaOffline();
+  if (fila.length === 0 || !navigator.onLine) return;
+  var item = fila[fila.length - 1];
+  enviarParaSheets(item, function(ok) {
+    if (ok) { removeFilaOffline(fila.length - 1); atualizarBadgeOffline(); despacharFila(); }
+  });
+}
+window.addEventListener('online', function() { despacharFila(); atualizarBadgeOffline(); });
+
+// ── Enviar ────────────────────────────────────────────────────
+function enviar() {
+  var n = 1;
+  for (var i = 1; i <= n; i++) {
+    if (!document.getElementById('talhao_' + i).value.trim()) { alert('Preencha o talhão do Teste ' + i + '.'); return; }
+    if (!document.querySelector('input[name="qual_' + i + '"]:checked')) { alert('Selecione a qualidade no Teste ' + i + '.'); return; }
+    if (!document.querySelector('input[name="resp_' + i + '"]:checked')) { alert('Informe se a R14 respondeu no Teste ' + i + '.'); return; }
+  }
+  var nome = document.getElementById('nome').value;
+  var data = document.getElementById('data').value;
+  var fazenda = document.getElementById('fazenda').value;
+  var registro = { nome: nome, data: data, regional: selectedReg, fazenda: fazenda, testes: [] };
+  for (var i = 1; i <= n; i++) {
+    registro.testes.push({
+      numero: i,
+      talhao: document.getElementById('talhao_' + i).value,
+      latitude: document.getElementById('lat_' + i).value || '',
+      longitude: document.getElementById('lng_' + i).value || '',
+      qualidade: document.querySelector('input[name="qual_' + i + '"]:checked').value,
+      respondeu: document.querySelector('input[name="resp_' + i + '"]:checked').value
+    });
+  }
+  if (!navigator.onLine) {
+    addFilaOffline(registro);
+    atualizarBadgeOffline();
+    document.getElementById('success-desc').textContent = '📵 Sem rede. Dados salvos no celular e enviados automaticamente ao recuperar sinal.\n' + selectedReg + ' · ' + fazenda + ' · ' + nome;
+    setStep(4);
+    return;
+  }
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('sending').classList.remove('hidden');
+  enviarParaSheets(registro, function(ok) {
+    if (ok) {
+      document.getElementById('success-desc').textContent = '✅ Enviado!\n' + selectedReg + ' · ' + fazenda + ' · ' + n + ' testes · ' + nome + ' · ' + data;
+      document.getElementById('sending').classList.add('hidden');
+      setStep(4);
+      despacharFila();
+    } else {
+      addFilaOffline(registro);
+      atualizarBadgeOffline();
+      document.getElementById('success-desc').textContent = '📵 Falha na conexão. Dados salvos e serão enviados ao recuperar o sinal.\n' + selectedReg + ' · ' + fazenda;
+      document.getElementById('sending').classList.add('hidden');
+      setStep(4);
+    }
+  });
+}
+
+function resetForm() {
+  document.getElementById('nome').value = '';
+  document.getElementById('data').value = new Date().toISOString().split('T')[0];
+  selectedReg = null;
+  document.querySelectorAll('.reg-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.getElementById('fazenda').innerHTML = '<option value="">Selecione a fazenda...</option>';
+  document.getElementById('testes-container').innerHTML = '';
+  setStep(1);
+  atualizarBadgeOffline();
+}
+
+// ── Inicialização ─────────────────────────────────────────────
+// Run immediately
+(function() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2,'0');
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var yyyy = today.getFullYear();
+  window._today = yyyy + '-' + mm + '-' + dd;
+})();
+
+// Also run on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  var el = document.getElementById('data');
+  if (el) el.value = window._today;
+  setStep(1);
+  atualizarBadgeOffline();
+  despacharFila();
+});
+
+// And on load as fallback
+window.addEventListener('load', function() {
+  var el = document.getElementById('data');
+  if (el && !el.value) el.value = window._today;
+});
+</script>
+</body>
+</html>
