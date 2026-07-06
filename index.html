@@ -461,28 +461,46 @@ function resetForm() {
 }
 
 // ── Inicialização ─────────────────────────────────────────────
-// Run immediately
+// Calculate today's date immediately - works offline
 (function() {
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2,'0');
-  var mm = String(today.getMonth()+1).padStart(2,'0');
-  var yyyy = today.getFullYear();
-  window._today = yyyy + '-' + mm + '-' + dd;
+  try {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2,'0');
+    var mm = String(today.getMonth()+1).padStart(2,'0');
+    var yyyy = today.getFullYear();
+    window._today = yyyy + '-' + mm + '-' + dd;
+  } catch(e) {
+    window._today = '';
+  }
 })();
 
 // Also run on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
+  // Set date - works offline since Date() is local
   var el = document.getElementById('data');
-  if (el) el.value = window._today;
+  if (el) {
+    el.value = window._today;
+    // Force set again after small delay for slower devices
+    setTimeout(function() {
+      if (el && !el.value) el.value = window._today;
+    }, 100);
+  }
   setStep(1);
   atualizarBadgeOffline();
   despacharFila();
 });
 
-// And on load as fallback
 window.addEventListener('load', function() {
   var el = document.getElementById('data');
   if (el && !el.value) el.value = window._today;
+});
+
+// Extra fallback - set date every time page becomes visible
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    var el = document.getElementById('data');
+    if (el && !el.value) el.value = window._today;
+  }
 });
 </script>
 </body>
