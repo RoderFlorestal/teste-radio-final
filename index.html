@@ -142,7 +142,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="field">
         <label>Data do teste <span class="req">*</span></label>
-        <input type="date" id="data">
+        <input type="text" id="data" placeholder="DD/MM/AAAA" inputmode="numeric">
       </div>
     </div>
     <div class="card">
@@ -258,18 +258,17 @@ function setStep(n) {
 
 function selectReg(reg, btnId) {
   selectedReg = reg;
-  // Remove selection from all
-  document.querySelectorAll('.reg-btn').forEach(function(b) {
-    b.classList.remove('selected');
-    b.style.borderColor = '';
-    b.style.background = '';
-  });
-  // Apply to selected
+  // Remove selection from all buttons
+  var allBtns = document.querySelectorAll('.reg-btn');
+  for (var b = 0; b < allBtns.length; b++) {
+    allBtns[b].classList.remove('selected');
+    allBtns[b].style.cssText = 'border-color:;background:;';
+  }
+  // Apply to selected button
   var btn = document.getElementById(btnId);
   if (btn) {
     btn.classList.add('selected');
-    btn.style.borderColor = '#1D9E75';
-    btn.style.background = '#E1F5EE';
+    btn.setAttribute('style', 'border-color:#1D9E75 !important; background:#E1F5EE !important;');
   }
 }
 
@@ -320,7 +319,7 @@ function capturarGPS(i) {
     },
     function(err) {
       btn.classList.remove('loading');
-      btn.innerHTML = '📍 Capturar localização';
+      btn.innerHTML = '📍 Capturar localização <span style="color:#E24B4A">*</span>';
       result.className = 'gps-error';
       var msg = err.code === 1 ? 'Permissão negada. Habilite o GPS nas configurações.' :
                 err.code === 2 ? 'GPS indisponível. Tente em área aberta.' :
