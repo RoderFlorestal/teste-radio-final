@@ -142,7 +142,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="field">
         <label>Data do teste <span class="req">*</span></label>
-        <input type="text" id="data" placeholder="DD/MM/AAAA" inputmode="numeric">
+        <input type="date" id="data">
       </div>
     </div>
     <div class="card">
@@ -406,8 +406,14 @@ function enviar() {
   var n = 1;
   for (var i = 1; i <= n; i++) {
     if (!document.getElementById('talhao_' + i).value.trim()) { alert('Preencha o talhão do Teste ' + i + '.'); return; }
-    if (!document.querySelector('input[name="qual_' + i + '"]:checked')) { alert('Selecione a qualidade no Teste ' + i + '.'); return; }
-    if (!document.querySelector('input[name="resp_' + i + '"]:checked')) { alert('Informe se a R14 respondeu no Teste ' + i + '.'); return; }
+    var latEl = document.getElementById('lat_' + i);
+    var lngEl = document.getElementById('lng_' + i);
+    if (!latEl || !lngEl || !latEl.value || !lngEl.value) {
+      alert('⚠️ GPS obrigatório!\n\nClique em "Capturar localização" e aguarde as coordenadas aparecerem antes de enviar.');
+      return;
+    }
+    if (!document.querySelector('input[name="resp_' + i + '"]:checked')) { alert('Informe se a Central R14 respondeu no Teste ' + i + '.'); return; }
+    if (!document.querySelector('input[name="qual_' + i + '"]:checked')) { alert('Selecione a qualidade do sinal no Teste ' + i + '.'); return; }
   }
   var nome = document.getElementById('nome').value;
   var data = document.getElementById('data').value;
